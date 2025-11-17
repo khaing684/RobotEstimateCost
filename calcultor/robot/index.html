@@ -37,44 +37,7 @@
   <div id="result"></div>
 
  <script>
-/*let clickCount = 0;
 
-document.getElementById('connectBtn').onclick = function() {
-  clickCount++;
-  if (clickCount === 1) {
-    // First click: show message from HTML only
-    document.getElementById('result').innerText = "Your payment is successful. Thank You";
-  } else if (clickCount === 2) {
-    // Second click: fetch result from SQL via Flask API
-    const data = {
-      host: "localhost",
-      dbName: "robotdb",
-      port: 3306,
-      username: "robotuser",
-      password: "myrobotpassword",
-      dbType: "mysql"
-    };
-
-    fetch('http://127.0.0.1:5500/databaseconnrequest', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-      if(result.status === 'success') {
-        document.getElementById('result').innerText = "Robot Estimate Cost: " + result.estimate_cost;
-      } else {
-        document.getElementById('result').innerText = result.message;
-      }
-    })
-    .catch(error => {
-      document.getElementById('result').innerText = 'Error: ' + error;
-    });
-  }
-}*/
 
 let clickCount = 0;
 document.getElementById('connectBtn').onclick = function() {

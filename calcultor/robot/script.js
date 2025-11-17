@@ -642,41 +642,87 @@ document.querySelectorAll('.camera-type-select').forEach(select => {
 });
 
 // Add robot design select box listener
-document.querySelectorAll('.robotdesign-type-select').forEach(select => {
-    select.addEventListener('change', function() {
-        const idx = parseInt(this.getAttribute('data-row'), 10);
-        const selectedIdx = parseInt(this.value, 10);
-        const selectedDesign = robotDesignTypes[selectedIdx];
-        // Update info box
-        document.getElementById(`robotdesign-info-${idx}`).innerHTML = `
-            <img src="${selectedDesign.img}" alt="${selectedDesign.name}" style="width:60px; display:block; margin-bottom:8px;">
-            <div><strong>Name:</strong> ${selectedDesign.name}</div>
-            <div><strong>Description:</strong> ${selectedDesign.desc}</div>
-        `;
-        // Update image cell
-        document.getElementById(`item-img-${idx}`).src = selectedDesign.img;
-        document.getElementById(`item-img-${idx}`).alt = selectedDesign.name;
-        // Update price and total
-        const qty = parseInt(document.querySelector(`.qty-input[data-idx="${idx}"]`).value, 10) || 1;
-        document.getElementById(`price-cell-${idx}`).textContent = `$${selectedDesign.price.toLocaleString()}`;
-        document.querySelectorAll('.row-total')[idx].textContent = `$${(selectedDesign.price * qty).toLocaleString()}`;
-        robotItems[idx].price = selectedDesign.price;
+document.querySelectorAll('.qty-input').forEach(input => {
+    input.addEventListener('input', function() {
+        const idx = parseInt(this.getAttribute('data-idx'), 10);
+        let qty = parseInt(this.value, 10);
+        if(isNaN(qty) || qty < 1) qty = 1;
+        this.value = qty;
+        robotItems[idx].qty = qty;
+
+        const price = getPrice(idx);
+        document.getElementById(`price-cell-${idx}`).textContent = `$${price.toLocaleString()}`;
+        this.closest('tr').querySelector('.row-total').textContent = `$${(price * qty).toLocaleString()}`;
+
         updateGrandTotal();
     });
 });
-
 }
 
 //update grand total function
 function updateGrandTotal() {
     let grandTotal = 0;
-    document.querySelectorAll('.row-total').forEach(td => {
-        grandTotal += parseInt(td.textContent.replace(/[^0-9]/g, ''), 10);
+    robotItems.forEach((item, idx) => {
+        const rowQty = item.qty;
+        const rowPrice = getPrice(idx);
+        grandTotal += rowQty * rowPrice;
     });
     document.getElementById('totalPrice').textContent = `$${grandTotal.toLocaleString()}`;
 }
+function getPrice(idx) {
+    const item = robotItems[idx];
+    let price = 0;
+
+    switch(item.desc) {
+        case "Motor":
+            const motorSelect = document.querySelector(`.motor-type-select[data-row="${idx}"]`);
+            price = motorTypes[motorSelect.value].price;
+            break;
+        case "Motor Driver":
+            const driverSelect = document.querySelector(`.motor-driver-type-select[data-row="${idx}"]`);
+            price = motorDriverTypes[driverSelect.value].price;
+            break;
+        case "IMU":
+            const imuSelect = document.querySelector(`.imu-type-select[data-row="${idx}"]`);
+            price = imuTypes[imuSelect.value].price;
+            break;
+        case "Lidar":
+            const lidarSelect = document.querySelector(`.lidar-type-select[data-row="${idx}"]`);
+            price = lidarTypes[lidarSelect.value].price;
+            break;
+        case "Motherboard":
+            const mbSelect = document.querySelector(`.motherboard-type-select[data-row="${idx}"]`);
+            price = motherboardTypes[mbSelect.value].price;
+            break;
+        case "Powersupply":
+            const psSelect = document.querySelector(`.powersupply-type-select[data-row="${idx}"]`);
+            price = powersupplyTypes[psSelect.value].price;
+            break;
+        case "Micro Controller":
+            const mcSelect = document.querySelector(`.microcontroller-type-select[data-row="${idx}"]`);
+            price = microControllerTypes[mcSelect.value].price;
+            break;
+        case "Software System":
+            const swSelect = document.querySelector(`.software-type-select[data-row="${idx}"]`);
+            price = softwareSystemTypes[swSelect.value].price;
+            break;
+        case "Caster Wheel":
+            const cwSelect = document.querySelector(`.caster-type-select[data-row="${idx}"]`);
+            price = casterWheelTypes[cwSelect.value].price;
+            break;
+        case "Camera":
+            const camSelect = document.querySelector(`.camera-type-select[data-row="${idx}"]`);
+            price = cameraTypes[camSelect.value].price;
+            break;
+        case "Robot Design":
+            const rdSelect = document.querySelector(`.robotdesign-type-select[data-row="${idx}"]`);
+            price = robotDesignTypes[rdSelect.value].price;
+            break;
+    }
+
+    return price;
+}
+
 
 renderTable();
-
-
 
